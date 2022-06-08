@@ -62,6 +62,6 @@ workflows:
           requires:
             - say-hello
       - save-hello-to-file
-      - get-data-from-persist
+      - get-data-from-persist:
           requires:
             - save-hello-to-file
