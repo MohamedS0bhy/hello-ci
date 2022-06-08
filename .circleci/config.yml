@@ -18,9 +18,22 @@ jobs:
           name: "Say hello"
           command: "echo Hello, World!"
 
+  list-files:
+    docker:
+      - image: cimg/base:stable
+
+      steps:
+        - checkout
+        - run:
+          name: "List Files"
+          command: "ls -al"
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
     jobs:
       - say-hello
+      - list-files:
+        requires:
+          - say-hello
