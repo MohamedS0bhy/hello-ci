@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run:
           name: "Say hello"
-          command: echo $ENV_VAR_1
+          command: echo $HELLO
 
   list-files:
     docker:
@@ -28,6 +28,30 @@ jobs:
           name: "List Files"
           command: "ls -al"
 
+  save-hello-to-file:
+    docker:
+      - image: cimg/base:stable
+
+    steps:
+      - run:
+          name: "Save Hello"
+          command: echo $HELLO > output.txt 
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - output.txt
+
+  get-data-from-persist:
+    docker:
+      - image: cimg/base:stable
+
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          command: cat ~/output.txt
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -37,3 +61,7 @@ workflows:
       - list-files:
           requires:
             - say-hello
+      - save-hello-to-file
+      - get-data-from-persist
+          requires:
+            - save-hello-to-file
