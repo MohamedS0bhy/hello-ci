@@ -2,66 +2,78 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+commands:
+  print_pipeline_id:
+    description: "print pipeline id"
+    parameters:
+      to:
+        type: string
+        default: $CIRCLE_WORKFLOW_ID
+    steps:
+      - run: echo << parameters.to >>
+
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: echo $HELLO
+  # say-hello:
+  #   # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+  #   # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  #   docker:
+  #     - image: cimg/base:stable
+  #   # Add steps to the job
+  #   # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: "Say hello"
+  #         command: echo $HELLO
 
-  list-files:
-    docker:
-      - image: cimg/base:stable
+  # list-files:
+  #   docker:
+  #     - image: cimg/base:stable
 
-    steps:
-      - checkout
-      - run:
-          name: "List Files"
-          command: "ls -al"
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: "List Files"
+  #         command: "ls -al"
 
-  save-hello-to-file:
-    docker:
-      - image: cimg/base:stable
+  # save-hello-to-file:
+  #   docker:
+  #     - image: cimg/base:stable
 
-    steps:
-      - run:
-          name: "Save Hello"
-          command: echo $HELLO > ~/output.txt 
+  #   steps:
+  #     - run:
+  #         name: "Save Hello"
+  #         command: echo $HELLO > ~/output.txt 
 
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - output.txt
+  #     - persist_to_workspace:
+  #         root: ~/
+  #         paths:
+  #           - output.txt
 
-  get-data-from-persist:
-    docker:
-      - image: cimg/base:stable
+  # get-data-from-persist:
+  #   docker:
+  #     - image: cimg/base:stable
 
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          command: cat ~/output.txt
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         command: cat ~/output.txt
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
-      - list-files:
-          requires:
-            - say-hello
-      - save-hello-to-file
-      - get-data-from-persist:
-          requires:
-            - save-hello-to-file
+# workflows:
+  # say-hello-workflow:
+  #   jobs:
+  #     - say-hello
+  #     - list-files:
+  #         requires:
+  #           - say-hello
+  #     - save-hello-to-file
+  #     - get-data-from-persist:
+  #         requires:
+  #           - save-hello-to-file
