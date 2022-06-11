@@ -4,7 +4,7 @@ defaults: &docker_img
   docker:
     - image: cimg/base:stable
 
-commands:
+# commands:
 #   print_pipeline_id:
 #     description: "print pipeline id"
 #     parameters:
@@ -15,7 +15,7 @@ commands:
 #       - run: echo << parameters.to >>
 
 
-# jobs:
+jobs:
 #   say-hello:
 #     docker:
 #       - image: cimg/base:stable
@@ -68,7 +68,6 @@ commands:
     <<: *docker_img
     steps:
       - run: exit 1
-
       - run: 
           command: echo "Hello Failure"
           when: on_fail
