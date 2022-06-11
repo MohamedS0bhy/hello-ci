@@ -67,13 +67,11 @@ commands:
   make_failure_job:
     <<: *docker_img
     steps:
-      run: echo $non_existing_var
+      - run: exit 1
 
-  job_to_run_on_failure:
-    <<: *docker_img
-    steps:
-      run: echo "Hello Failure"
-      when: on_fail
+      - run: 
+          command: echo "Hello Failure"
+          when: on_fail
 
 workflows:
   say-hello-workflow:
@@ -89,4 +87,3 @@ workflows:
   #           - save-hello-to-file
         # - print_pipeline_id
       - make_failure_job
-      - job_to_run_on_failure
