@@ -1,88 +1,26 @@
 version: 2.1
-
-defaults: &docker_img
-  docker:
-    - image: cimg/base:stable
-
-# commands:
-#   print_pipeline_id:
-#     description: "print pipeline id"
-#     parameters:
-#       to:
-#         type: string
-#         default: $CIRCLE_WORKFLOW_ID
-#     steps:
-#       - run: echo << parameters.to >>
-
-
+# Use a package of configuration called an orb.
+orbs:
+  # Choose either one of the orbs below
+  # welcome: circleci/welcome-orb@0.4.1
+  # aws-cli: circleci/aws-cli@2.0.3
+# Define the jobs we want to run for this project
 jobs:
-#   say-hello:
-#     docker:
-#       - image: cimg/base:stable
-#     steps:
-#       - checkout
-#       - run:
-#           name: "Say hello"
-#           command: echo $HELLO
-
-#   list-files:
-#     docker:
-#       - image: cimg/base:stable
-
-#     steps:
-#       - checkout
-#       - run:
-#           name: "List Files"
-#           command: "ls -al"
-
-#   save-hello-to-file:
-#     docker:
-#       - image: cimg/base:stable
-
-#     steps:
-#       - run:
-#           name: "Save Hello"
-#           command: echo $HELLO > ~/output.txt 
-
-#       - persist_to_workspace:
-#           root: ~/
-#           paths:
-#             - output.txt
-
-#   get-data-from-persist:
-#     docker:
-#       - image: cimg/base:stable
-
-#     steps:
-#       - attach_workspace:
-#           at: ~/
-#       - run:
-#           command: cat ~/output.txt
-
-  # print_pipeline_id:
-  #   <<: *docker_img
-  #   steps:
-  #     - print_pipeline_id
-
-  make_failure_job:
-    <<: *docker_img
+  create_infrastructure: 
+    docker:
+      - image: amazon/aws-cli
     steps:
-      - run: exit 1
-      - run: 
-          command: echo "Hello Failure"
-          when: on_fail
-
+      - checkout
+      - run:
+          name: Create Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation.yml \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --region us-east-1
+# Sequential workflow
 workflows:
-  say-hello-workflow:
+  # Name the workflow
+  myWorkflow:
     jobs:
-
-  #     - say-hello
-  #     - list-files:
-  #         requires:
-  #           - say-hello
-  #     - save-hello-to-file
-  #     - get-data-from-persist:
-  #         requires:
-  #           - save-hello-to-file
-        # - print_pipeline_id
-      - make_failure_job
+      - create_infrastructure
